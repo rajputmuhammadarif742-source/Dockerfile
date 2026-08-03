@@ -1,8 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 
 # ffmpeg + a font for burned-in subtitles
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg fonts-dejavu-core \
+# Retries + IPv4-only work around transient DNS/network flakiness on some cloud build hosts
+RUN apt-get update -o Acquire::Retries=5 -o Acquire::ForceIPv4=true \
+    && apt-get install -y --no-install-recommends \
+       ffmpeg fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
